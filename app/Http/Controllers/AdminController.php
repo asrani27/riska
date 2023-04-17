@@ -42,6 +42,7 @@ class AdminController extends Controller
     public function user_store(Request $req)
     {
         $checkUser = User::where('username', $req->username)->first();
+        $role = Role::where('name', 'superadmin')->first();
         if ($checkUser == null) {
             if ($req->password1 != $req->password2) {
                 Session::flash('error', 'Password Tidak Sama');
@@ -54,6 +55,7 @@ class AdminController extends Controller
                 $n->password = bcrypt($req->password1);
                 $n->save();
 
+                $n->roles()->attach($role);
                 Session::flash('success', 'Berhasil Disimpan, Password : ' . $req->password1);
                 return redirect('/superadmin/user');
             }
